@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préjugés, quand tu nous tiens - Léo Lagrange</title>
+    <style>
+        :root {
+            --primary: #004e98; /* Bleu Léo */
+            --secondary: #e60028; /* Rouge */
+            --accent: #ffcc00; /* Jaune */
+            --bg: #f0f4f8;
+            --text: #333;
+            --bubble-c1: #ffadad;
+            --bubble-c2: #ffd6a5;
+            --bubble-c3: #fdffb6;
+            --bubble-c4: #caffbf;
+            --bubble-c5: #9bf6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow: hidden; /* Empêche le scroll global */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- CONTENEUR PRINCIPAL --- */
+        #presentation-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- SLIDES --- */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+            transform: scale(0.95);
+            background: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        /* --- NAVIGATION --- */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 78, 152, 0.8);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 100;
+            transition: background 0.3s;
+        }
+        .nav-btn:hover { background: var(--secondary); }
+        #prev-btn { left: 20px; }
+        #next-btn { right: 20px; }
+
+        .reset-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- STYLES GENERAUX --- */
+        h1 { color: var(--primary); text-align: center; }
+        h2 { color: var(--secondary); margin-bottom: 30px; text-align: center;}
+        
+        .logos-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .logo-img {
+            height: 100px;
+            object-fit: contain;
+        }
+
+        /* --- SLIDE 2: REGLES --- */
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+        .rules-list li {
+            margin: 15px 0;
+            padding: 15px;
+            background: #eef;
+            border-radius: 10px;
+            opacity: 0; /* Caché au début */
+            transform: translateX(-50px);
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+        }
+        .rules-list li.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .rules-list li::before {
+            content: '👉';
+            margin-right: 10px;
+        }
+
+        /* --- SLIDE 3: BULLES --- */
+        .bubble-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 800px;
+        }
+        .bubble {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+            font-size: 1.2rem;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- SLIDE 4: LEO LAGRANGE --- */
+        .split-layout {
+            display: flex;
+            width: 90%;
+            height: 80%;
+            gap: 20px;
+        }
+        .split-col {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        .split-col h3 { color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px;}
+        .timeline-item { margin-bottom: 10px; border-left: 3px solid var(--secondary); padding-left: 10px; }
+
+        /* --- SLIDE 5: CERCLES CONCENTRIQUES --- */
+        .concentric-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .circle {
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Texte en haut */
+            position: absolute;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+        .circle:hover { transform: scale(1.05); z-index: 5; }
+        .circle-text { margin-top: 20px; font-weight: bold; background: rgba(255,255,255,0.7); padding: 2px 10px; border-radius: 10px; }
+        .circle-content {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .circle:hover .circle-content { opacity: 1; }
+
+        .c-region { width: 600px; height: 600px; background: #cce5ff; border: 2px solid #004e98; z-index: 1;}
+        .c-dept { width: 400px; height: 400px; background: #ffcccc; border: 2px solid #e60028; z-index: 2;}
+        .c-ville { width: 200px; height: 200px; background: #ffffcc; border: 2px solid #ffcc00; z-index: 3;}
+
+        /* --- SLIDE 6: NUMEROS --- */
+        .grid-numbers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 80%;
+        }
+        .num-card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .num-card img { max-width: 80%; max-height: 80%; }
+        .num-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .num-card.zoomed {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(1.5);
+            width: 400px;
+            height: 300px;
+            z-index: 1000;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.7); /* Backdrop */
+        }
+        .num-details { display: none; font-size: 1rem; padding: 10px; text-align: center; margin-top: 10px;}
+        .num-card.zoomed .num-details { display: block; }
+        .num-card.zoomed .main-display { transform: scale(0.8); }
+
+        /* --- SLIDE 7: STATS --- */
+        .stats-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat-card {
+            width: 200px;
+            height: 250px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .stat-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .stat-card.flipped .stat-inner { transform: rotateY(180deg); }
+        .stat-front, .stat-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .stat-front { background-color: var(--primary); color: white; font-size: 1.2rem; font-weight: bold; }
+        .stat-back { background-color: var(--accent); color: black; transform: rotateY(180deg); font-size: 1rem; }
+
+        /* --- SLIDE 8: NUAGE DE MOTS --- */
+        #word-input {
+            padding: 10px;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary);
+            border-radius: 5px;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        #cloud-area {
+            width: 80%;
+            height: 500px;
+            border: 2px dashed #ccc;
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .cloud-word {
+            position: absolute;
+            font-weight: bold;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        /* --- SLIDE 11: COURAGE --- */
+        .corners-container {
+            position: relative;
+            width: 90%;
+            height: 70%;
+            border: 3px dashed #ccc;
+            border-radius: 20px;
+        }
+        .corner {
+            position: absolute;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 15px;
+            font-weight: bold;
+            max-width: 200px;
+            text-align: center;
+        }
+        .c-1 { top: 20px; left: 20px; background: #e63946; } /* Je ne fais rien */
+        .c-2 { top: 20px; right: 20px; background: #457b9d; } /* Je préviens */
+        .c-3 { bottom: 20px; left: 50%; transform: translateX(-50%); background: #2a9d8f; } /* J'interviens */
+        .situation-box {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            text-align: center;
+            color: #333;
+        }
+
+        /* --- VIDEO IFRAME --- */
+        iframe { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+    </style>
+</head>
+<body>
+
+<div id="presentation-container">
+    <button id="prev-btn" class="nav-btn">&#10094;</button>
+    <button id="next-btn" class="nav-btn">&#10095;</button>
+
+    <div class="slide active" id="slide1">
+        <h1>Préjugés, quand tu nous tiens</h1>
+        <p style="font-size: 1.5rem; color: #666;">Une animation interactive</p>
+        <div class="logos-row">
+            <img src="bb85148b-ae5c-56ea-8aed-28f8645ef37d.jpg" alt="62 Pas de Calais" class="logo-img">
+            <img src="46ac9ea9-deb1-531b-a49e-79bf6baff8fd.jpg" alt="Démocratie et Courage" class="logo-img">
+            <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Léo Lagrange" class="logo-img">
+        </div>
+    </div>
+
+    <div class="slide" id="slide2">
+        <button class="reset-btn" onclick="resetSlide(2)">🔄 Réinitialiser</button>
+        <h1>Les Règles du Jeu</h1>
+        <ul class="rules-list" id="rulesList">
+            <li>Éviter de couper la parole aux autres</li>
+            <li>Encourager la participation de chacun</li>
+            <li>Maintenir un dialogue ouvert</li>
+            <li>Ne pas viser une personne en particulier</li>
+            <li>Ne pas transformer la discussion en cas personnel</li>
+        </ul>
+    </div>
+
+    <div class="slide" id="slide3">
+        <button class="reset-btn" onclick="resetSlide(3)">🔄 Réinitialiser</button>
+        <h1>Qui es-tu ?</h1>
+        <div class="bubble-container">
+            <div class="bubble" style="background-color: var(--bubble-c1);">Comment je m'appelle ?</div>
+            <div class="bubble" style="background-color: var(--bubble-c2);">Ce que j'aime</div>
+            <div class="bubble" style="background-color: var(--bubble-c3);">Ce que j'aime pas</div>
+            <div class="bubble" style="background-color: var(--bubble-c4);">Ce que je veux faire plus tard</div>
+            <div class="bubble" style="background-color: var(--bubble-c5);">Mon humeur du jour</div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide4">
+        <h1>Léo Lagrange</h1>
+        <div class="split-layout">
+            <div class="split-col">
+                <h3>L'Homme (1900-1940)</h3>
+                <div class="timeline-item"><strong>1900 :</strong> Né le 28 Novembre</div>
+                <div class="timeline-item">Député du Nord</div>
+                <div class="timeline-item"><strong>1936 :</strong> Premier sous-secrétaire d'État aux sports et loisirs</div>
+                <div class="timeline-item">Instaure les Congés payés, auberges de jeunesse, sports de masse</div>
+                <div class="timeline-item">Unique député engagé au combat</div>
+                <div class="timeline-item"><strong>9 juin 1940 :</strong> Décès au front</div>
+                <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Logo" style="width:100px; margin-top:20px;">
+            </div>
+            <div class="split-col">
+                <h3>L'Association</h3>
+                <div class="timeline-item">Fondée en 1950 par Pierre Mauroy</div>
+                <div class="timeline-item">Association d’éducation populaire reconnue d’utilité publique</div>
+                <div class="timeline-item"><strong>Héritage :</strong> Philosophie optimiste</div>
+                <div class="timeline-item"><strong>Missions :</strong> Éducation non formelle, loisirs, émancipation, lutte contre les inégalités</div>
+                <div class="timeline-item"><strong>Actions :</strong> Animation, petite enfance, formation pro, centres sociaux...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide5">
+        <h1>Les Acteurs Publics</h1>
+        <div class="concentric-container">
+            <div class="circle c-region">
+                <span class="circle-text">La Région</span>
+                <div class="circle-content">
+                    <strong>Missions :</strong><br>Lycées<br>ARS (Santé)<br>Transports régionaux<br>Formation
+                </div>
+            </div>
+            <div class="circle c-dept">
+                <span class="circle-text">Le Département</span>
+                <div class="circle-content">
+                    <strong>Missions :</strong><br>Collèges<br>Routes départementales<br>ASE (Aide Sociale à l'Enfance)<br>Solidarité
+                </div>
+            </div>
+            <div class="circle c-ville">
+                <span class="circle-text">La Ville</span>
+                <div class="circle-content">
+                    <strong>Missions :</strong><br>École primaire<br>Métro / Bus<br>État civil<br>Urbanisme
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide6">
+        <button class="reset-btn" onclick="resetSlide(6)">🔄 Réinitialiser</button>
+        <h1>Numéros Utiles & Urgences</h1>
+        <div class="grid-numbers">
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display">119</div>
+                <div class="num-details">Enfance en danger.<br>Appel confidentiel et gratuit 24/7.</div>
+            </div>
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display">17</div>
+                <div class="num-details">Police Secours.<br>En cas d'urgence immédiate (agression, vol...).</div>
+            </div>
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display">911 / 112</div>
+                <div class="num-details">Urgences universelles internationales.<br>Valable dans toute l'UE.</div>
+            </div>
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display"><img src="925d7b74-f729-5b7d-8c62-b1a6bb23ddcb.jpg" alt="3018"></div>
+                <div class="num-details">3018 - E-Enfance.<br>Lutte contre le cyber-harcèlement.<br>Écoute, aide et conseils.</div>
+            </div>
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display"><img src="2f2cd4b5-5d6a-5fc8-a6fe-1aa29e1ee830.jpg" alt="Défenseur des droits"></div>
+                <div class="num-details">3028 - Défenseur des droits.<br>Victime de discrimination ?<br>Saisir le défenseur.</div>
+            </div>
+            <div class="num-card" onclick="toggleZoom(this)">
+                <div class="main-display">3114</div>
+                <div class="num-details">Prévention Suicide.<br>Écoute professionnelle et confidentielle 24/7.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide7">
+        <button class="reset-btn" onclick="resetSlide(7)">🔄 Réinitialiser</button>
+        <h1>Discriminations : Quelques Chiffres</h1>
+        <p>Cliquez sur les cartes pour découvrir les réalités</p>
+        <div class="stats-container">
+            <div class="stat-card" onclick="this.classList.toggle('flipped')">
+                <div class="stat-inner">
+                    <div class="stat-front">Homophobie</div>
+                    <div class="stat-back">Les actes LGBTphobes augmentent chaque année (source SOS Homophobie).<br>Impact fort sur la santé mentale.</div>
+                </div>
+            </div>
+            <div class="stat-card" onclick="this.classList.toggle('flipped')">
+                <div class="stat-inner">
+                    <div class="stat-front">Racisme</div>
+                    <div class="stat-back">Les infractions à caractère raciste sont les plus nombreuses dans les rapports annuels de la CNCDH.</div>
+                </div>
+            </div>
+            <div class="stat-card" onclick="this.classList.toggle('flipped')">
+                <div class="stat-inner">
+                    <div class="stat-front">Islamophobie</div>
+                    <div class="stat-back">Des préjugés persistants et des actes visant spécifiquement les personnes de confession musulmane.</div>
+                </div>
+            </div>
+            <div class="stat-card" onclick="this.classList.toggle('flipped')">
+                <div class="stat-inner">
+                    <div class="stat-front">Antisémitisme</div>
+                    <div class="stat-back">Forte recrudescence des actes antisémites signalés ces dernières années.</div>
+                </div>
+            </div>
+             <div class="stat-card" onclick="this.classList.toggle('flipped')">
+                <div class="stat-inner">
+                    <div class="stat-front">Christianophobie</div>
+                    <div class="stat-back">Actes de vandalisme contre les édifices religieux chrétiens et discriminations.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide8">
+        <button class="reset-btn" onclick="resetSlide(8)">🔄 Réinitialiser</button>
+        <h1>Nuage de Mots</h1>
+        <p>Entrez un mot qui évoque "Discrimination" pour vous</p>
+        <input type="text" id="word-input" placeholder="Tapez un mot et Entrée..." onkeypress="handleWordInput(event)">
+        <div id="cloud-area"></div>
+    </div>
+
+    <div class="slide" id="slide9">
+        <h1>Cultionnary</h1>
+        <div style="background: #fff3cd; padding: 40px; border-radius: 20px; border: 2px solid #ffcc00; max-width: 800px;">
+            <h2 style="color: #d35400;">Les Règles</h2>
+            <ul style="font-size: 1.4rem; line-height: 1.8;">
+                <li>Faites des groupes, vous aurez <strong>7 dessins</strong> à réaliser.</li>
+                <li>Le dessinateur doit faire comprendre aux autres membres de son groupe ce que nous lui avons demandé.</li>
+                <li>Vous serez dessinateurs <strong>à tour de rôle</strong>.</li>
+                <li>🤫 <strong>Interdit</strong> de parler ou d’écrire pour le dessinateur !</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide" id="slide10">
+        <h1>Ciné Débat</h1>
+        <iframe width="800" height="450" src="https://www.youtube.com/embed/e2cNSBtWeGk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <div class="slide" id="slide11">
+        <h1>Le Courage d'Agir</h1>
+        <div class="corners-container">
+            <div class="corner c-1">JE NE FAIS RIEN</div>
+            <div class="corner c-2">JE PRÉVIENS</div>
+            <div class="corner c-3">J'INTERVIENS</div>
+            
+            <div class="situation-box">
+                <p><strong>RÈGLES :</strong><br>
+                Nous allons citer des situations.<br>
+                Déplacez-vous (mentalement ou physiquement)<br>
+                vers le coin qui correspond à votre réaction.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide12">
+        <h1>Merci et à bientôt !</h1>
+        <div class="logos-row">
+            <img src="bb85148b-ae5c-56ea-8aed-28f8645ef37d.jpg" alt="62 Pas de Calais" class="logo-img">
+            <img src="46ac9ea9-deb1-531b-a49e-79bf6baff8fd.jpg" alt="Démocratie et Courage" class="logo-img">
+            <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Léo Lagrange" class="logo-img">
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 12;
+
+    // --- NAVIGATION ---
+    const updateSlides = () => {
+        document.querySelectorAll('.slide').forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index + 1 === currentSlide) {
+                slide.classList.add('active');
+                // Trigger animation for Slide 2 if needed
+                if (currentSlide === 2) animateRules();
+            }
+        });
+    };
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            updateSlides();
+        }
+    });
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+        if (currentSlide > 1) {
+            currentSlide--;
+            updateSlides();
+        }
+    });
+
+    // --- LOGIQUE SLIDE 2 (Règles animées) ---
+    function animateRules() {
+        const items = document.querySelectorAll('#rulesList li');
+        items.forEach((item, index) => {
+            setTimeout(() => {
+                item.classList.add('show');
+            }, index * 1000); // Apparition toutes les secondes
+        });
+    }
+
+    // --- LOGIQUE SLIDE 6 (Zoom Cartes) ---
+    function toggleZoom(card) {
+        // Enlève le zoom des autres
+        const allCards = document.querySelectorAll('.num-card');
+        const isZoomed = card.classList.contains('zoomed');
+        
+        allCards.forEach(c => c.classList.remove('zoomed'));
+        
+        if (!isZoomed) {
+            card.classList.add('zoomed');
+        }
+    }
+
+    // --- LOGIQUE SLIDE 8 (Nuage de mots) ---
+    function handleWordInput(e) {
+        if (e.key === 'Enter') {
+            const input = document.getElementById('word-input');
+            const word = input.value.trim();
+            if (word) {
+                createCloudWord(word);
+                input.value = '';
+            }
+        }
+    }
+
+    function createCloudWord(text) {
+        const area = document.getElementById('cloud-area');
+        const span = document.createElement('span');
+        span.textContent = text;
+        span.className = 'cloud-word';
+        
+        // Random styles
+        const colors = ['#e60028', '#004e98', '#ffcc00', '#2a9d8f', '#e76f51'];
+        const size = Math.floor(Math.random() * 20) + 16; // 16px to 36px
+        const rotate = Math.floor(Math.random() * 60) - 30; // -30 to 30 deg
+        const top = Math.floor(Math.random() * (area.clientHeight - 40));
+        const left = Math.floor(Math.random() * (area.clientWidth - 80));
+
+        span.style.color = colors[Math.floor(Math.random() * colors.length)];
+        span.style.fontSize = size + 'px';
+        span.style.transform = `rotate(${rotate}deg)`;
+        span.style.top = top + 'px';
+        span.style.left = left + 'px';
+
+        area.appendChild(span);
+    }
+
+    // --- FONCTION RESET GLOBALE ---
+    function resetSlide(slideNum) {
+        if (slideNum === 2) {
+            const items = document.querySelectorAll('#rulesList li');
+            items.forEach(item => item.classList.remove('show'));
+            setTimeout(() => animateRules(), 500);
+        }
+        else if (slideNum === 6) {
+            document.querySelectorAll('.num-card').forEach(c => c.classList.remove('zoomed'));
+        }
+        else if (slideNum === 7) {
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('flipped'));
+        }
+        else if (slideNum === 8) {
+            document.getElementById('cloud-area').innerHTML = '';
+            document.getElementById('word-input').value = '';
+        }
+        else if (slideNum === 3) {
+            // Animation simple CSS re-trigger hack
+            const container = document.querySelector('#slide3 .bubble-container');
+            const clone = container.cloneNode(true);
+            container.parentNode.replaceChild(clone, container);
+        }
+    }
+
+    // Init
+    updateSlides();
+
+</script>
+</body>
+</html>
