@@ -3,688 +3,712 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Préjugés, quand tu nous tiens - Léo Lagrange</title>
+    <title>Préjugés & Discriminations - Léo Lagrange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #004e98; /* Bleu Léo */
-            --secondary: #e60028; /* Rouge */
-            --accent: #ffcc00; /* Jaune */
-            --bg: #f0f4f8;
-            --text: #333;
-            --bubble-c1: #ffadad;
-            --bubble-c2: #ffd6a5;
-            --bubble-c3: #fdffb6;
-            --bubble-c4: #caffbf;
-            --bubble-c5: #9bf6ff;
+            --primary: #004e98;
+            --secondary: #e60028;
+            --accent: #ffcc00;
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --glass: rgba(255, 255, 255, 0.85);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --text-main: #2c3e50;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Nunito', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg);
-            color: var(--text);
-            overflow: hidden; /* Empêche le scroll global */
+            background: #e0eafc; /* Fallback */
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
+            color: var(--text-main);
+            overflow: hidden;
             height: 100vh;
             width: 100vw;
         }
 
-        /* --- CONTENEUR PRINCIPAL --- */
+        /* --- BACKGROUND ANIME --- */
+        .bg-bubbles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: floatUp 20s infinite linear;
+        }
+        @keyframes floatUp {
+            from { transform: translateY(100vh) scale(0); opacity: 0; }
+            to { transform: translateY(-10vh) scale(1); opacity: 1; }
+        }
+
+        /* --- CONTENEUR --- */
         #presentation-container {
             position: relative;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* --- SLIDES --- */
+        /* --- NAVIGATION --- */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            border: none;
+            box-shadow: var(--shadow);
+            color: var(--primary);
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-arrow:hover { transform: translateY(-50%) scale(1.2); background: var(--accent); color: white; }
+        #prev-btn { left: 30px; }
+        #next-btn { right: 30px; }
+
+        .reset-btn {
+            position: absolute;
+            top: 30px; right: 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: transform 0.2s;
+            z-index: 1000;
+        }
+        .reset-btn:hover { transform: scale(1.1); }
+
+        /* --- SLIDES GENERAL --- */
         .slide {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            width: 90%;
+            height: 85%;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease;
-            transform: scale(0.95);
-            background: white;
-            padding: 20px;
+            justify-content: center; /* Centré par défaut */
+            padding: 40px;
             box-sizing: border-box;
+            opacity: 0;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            pointer-events: none;
         }
 
         .slide.active {
             opacity: 1;
+            transform: scale(1) translateY(0);
             pointer-events: all;
-            transform: scale(1);
             z-index: 10;
         }
 
-        /* --- NAVIGATION --- */
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 78, 152, 0.8);
-            color: white;
-            border: none;
-            padding: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 100;
-            transition: background 0.3s;
-        }
-        .nav-btn:hover { background: var(--secondary); }
-        #prev-btn { left: 20px; }
-        #next-btn { right: 20px; }
+        h1 { font-family: 'Fredoka', sans-serif; font-size: 3rem; color: var(--primary); margin: 0 0 20px 0; text-align: center; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        h2 { color: var(--secondary); }
+        p { font-size: 1.2rem; line-height: 1.6; color: #555; text-align: center; max-width: 800px; }
 
-        .reset-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* --- STYLES GENERAUX --- */
-        h1 { color: var(--primary); text-align: center; }
-        h2 { color: var(--secondary); margin-bottom: 30px; text-align: center;}
-        
-        .logos-row {
+        /* --- SLIDE 1: INTRO --- */
+        .logos-container {
             display: flex;
-            justify-content: center;
-            gap: 30px;
+            gap: 40px;
             margin-top: 50px;
             flex-wrap: wrap;
+            justify-content: center;
         }
-        .logo-img {
-            height: 100px;
-            object-fit: contain;
+        .logo-card {
+            background: white;
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
+        .logo-card:hover { transform: translateY(-10px) rotate(2deg); }
+        .logo-img { height: 120px; object-fit: contain; }
 
         /* --- SLIDE 2: REGLES --- */
-        .rules-list {
-            list-style: none;
-            padding: 0;
-            font-size: 1.5rem;
-            text-align: left;
-        }
-        .rules-list li {
-            margin: 15px 0;
-            padding: 15px;
-            background: #eef;
-            border-radius: 10px;
-            opacity: 0; /* Caché au début */
-            transform: translateX(-50px);
-            transition: all 0.5s ease;
+        .rules-container {
             display: flex;
-            align-items: center;
-        }
-        .rules-list li.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        .rules-list li::before {
-            content: '👉';
-            margin-right: 10px;
-        }
-
-        /* --- SLIDE 3: BULLES --- */
-        .bubble-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            max-width: 800px;
-        }
-        .bubble {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            animation: float 3s ease-in-out infinite;
-            font-size: 1.2rem;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* --- SLIDE 4: LEO LAGRANGE --- */
-        .split-layout {
-            display: flex;
-            width: 90%;
-            height: 80%;
-            gap: 20px;
-        }
-        .split-col {
-            flex: 1;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            overflow-y: auto;
-        }
-        .split-col h3 { color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px;}
-        .timeline-item { margin-bottom: 10px; border-left: 3px solid var(--secondary); padding-left: 10px; }
-
-        /* --- SLIDE 5: CERCLES CONCENTRIQUES --- */
-        .concentric-container {
-            position: relative;
-            width: 600px;
-            height: 600px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .circle {
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Texte en haut */
-            position: absolute;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            text-align: center;
-        }
-        .circle:hover { transform: scale(1.05); z-index: 5; }
-        .circle-text { margin-top: 20px; font-weight: bold; background: rgba(255,255,255,0.7); padding: 2px 10px; border-radius: 10px; }
-        .circle-content {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .circle:hover .circle-content { opacity: 1; }
-
-        .c-region { width: 600px; height: 600px; background: #cce5ff; border: 2px solid #004e98; z-index: 1;}
-        .c-dept { width: 400px; height: 400px; background: #ffcccc; border: 2px solid #e60028; z-index: 2;}
-        .c-ville { width: 200px; height: 200px; background: #ffffcc; border: 2px solid #ffcc00; z-index: 3;}
-
-        /* --- SLIDE 6: NUMEROS --- */
-        .grid-numbers {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            flex-direction: column;
             gap: 20px;
             width: 80%;
         }
-        .num-card {
+        .rule-bubble {
             background: white;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            height: 150px;
+            padding: 20px 30px;
+            border-radius: 50px; /* Forme de pilule */
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,78,152,0.1);
+            transform: translateX(-100vw); /* Part de la gauche */
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+        }
+        .rule-bubble span { margin-right: 15px; font-size: 2rem; }
+        .rule-bubble.show { transform: translateX(0); }
+        .rule-bubble:nth-child(odd) { align-self: flex-start; border-left: 10px solid var(--accent); }
+        .rule-bubble:nth-child(even) { align-self: flex-end; border-right: 10px solid var(--secondary); flex-direction: row-reverse; }
+
+        /* --- SLIDE 3: QUI ES TU (Icebreaker) --- */
+        .icebreaker-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        .ib-bubble {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: bounce 3s infinite ease-in-out;
+        }
+        .ib-bubble:hover { transform: scale(1.1); }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- SLIDE 4: LEO LAGRANGE --- */
+        .leo-layout {
+            display: flex; width: 100%; height: 80%; gap: 30px;
+        }
+        .leo-card {
+            flex: 1;
+            background: rgba(255,255,255,0.9);
+            border-radius: 30px;
+            padding: 30px;
+            overflow-y: auto;
+            border: 2px solid transparent;
+        }
+        .leo-card:hover { border-color: var(--primary); }
+        .leo-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .leo-icon { font-size: 2rem; }
+        .history-item { 
+            margin-bottom: 15px; 
+            padding-left: 15px; 
+            border-left: 4px solid var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        /* --- SLIDE 5: CERCLES --- */
+        .circles-wrapper {
+            position: relative;
+            width: 600px; height: 600px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .concentric {
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+            transition: all 0.4s;
+            cursor: default;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .c-1 { width: 600px; height: 600px; background: #e3f2fd; color: #1565c0; z-index: 1; border: 4px solid #1565c0; }
+        .c-2 { width: 400px; height: 400px; background: #ffebee; color: #c62828; z-index: 2; border: 4px solid #c62828; top: 100px; } /* centrage manuel */
+        .c-3 { width: 200px; height: 200px; background: #fffde7; color: #f9a825; z-index: 3; border: 4px solid #f9a825; top: 200px; }
+
+        .concentric:hover { transform: scale(1.05); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .hover-info {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; opacity: 0; transition: opacity 0.3s;
+            font-size: 0.9rem; color: #333; text-transform: none; font-weight: normal; width: 80%;
+        }
+        .concentric:hover .hover-info { opacity: 1; }
+
+        /* --- SLIDE 6: NUMEROS --- */
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .num-btn {
+            background: white;
+            border-radius: 20px;
+            height: 140px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             position: relative;
             overflow: hidden;
         }
-        .num-card img { max-width: 80%; max-height: 80%; }
-        .num-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .num-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); background: var(--accent); color: white;}
+        .num-btn img { max-height: 80%; max-width: 80%; }
         
-        .num-card.zoomed {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(1.5);
-            width: 400px;
-            height: 300px;
-            z-index: 1000;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 1000px rgba(0,0,0,0.7); /* Backdrop */
-        }
-        .num-details { display: none; font-size: 1rem; padding: 10px; text-align: center; margin-top: 10px;}
-        .num-card.zoomed .num-details { display: block; }
-        .num-card.zoomed .main-display { transform: scale(0.8); }
-
-        /* --- SLIDE 7: STATS --- */
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+        /* Modal Overlay pour le zoom */
+        #zoom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: none;
             justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
         }
-        .stat-card {
-            width: 200px;
-            height: 250px;
+        #zoom-card {
+            background: white;
+            width: 500px;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+        #zoom-card h2 { font-size: 3rem; margin: 0; color: var(--primary); }
+        #zoom-card p { font-size: 1.5rem; margin-top: 20px; }
+        #zoom-card img { height: 100px; margin-bottom: 20px; }
+
+        /* --- SLIDE 7: STATS (FLIP CARDS) --- */
+        .stats-wrapper {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+        }
+        .flip-card {
+            background-color: transparent;
+            width: 220px; height: 300px;
             perspective: 1000px;
             cursor: pointer;
         }
-        .stat-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center; transition: transform 0.8s;
             transform-style: preserve-3d;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-            border-radius: 10px;
         }
-        .stat-card.flipped .stat-inner { transform: rotateY(180deg); }
-        .stat-front, .stat-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            padding: 10px;
-            box-sizing: border-box;
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            padding: 20px; box-sizing: border-box;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .stat-front { background-color: var(--primary); color: white; font-size: 1.2rem; font-weight: bold; }
-        .stat-back { background-color: var(--accent); color: black; transform: rotateY(180deg); font-size: 1rem; }
+        .flip-front { background: white; color: var(--primary); }
+        .flip-front h3 { font-size: 1.5rem; margin: 0; }
+        .flip-front .icon { font-size: 3rem; margin-bottom: 10px; }
+        
+        .flip-back { background: var(--primary); color: white; transform: rotateY(180deg); }
+        .flip-back strong { font-size: 2rem; color: var(--accent); display: block; margin-bottom: 10px; }
 
-        /* --- SLIDE 8: NUAGE DE MOTS --- */
+        /* --- SLIDE 8: NUAGE --- */
         #word-input {
-            padding: 10px;
-            font-size: 1.2rem;
-            border: 2px solid var(--primary);
-            border-radius: 5px;
-            width: 300px;
-            margin-bottom: 20px;
+            padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; border: none;
+            width: 300px; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center; margin-bottom: 20px;
         }
-        #cloud-area {
-            width: 80%;
-            height: 500px;
-            border: 2px dashed #ccc;
-            position: relative;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
+        #cloud-box {
+            width: 100%; height: 400px;
+            background: white; border-radius: 30px;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
         }
-        .cloud-word {
-            position: absolute;
-            font-weight: bold;
-            animation: popIn 0.5s ease;
+        .cloud-tag {
+            position: absolute; font-weight: 800;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 1px 1px 0 white;
         }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
         /* --- SLIDE 11: COURAGE --- */
-        .corners-container {
-            position: relative;
-            width: 90%;
-            height: 70%;
-            border: 3px dashed #ccc;
-            border-radius: 20px;
+        .corner-game {
+            position: relative; width: 100%; height: 100%;
+            border: 5px dashed rgba(0,0,0,0.1); border-radius: 30px;
         }
-        .corner {
-            position: absolute;
-            padding: 20px;
-            background: var(--primary);
-            color: white;
-            border-radius: 15px;
-            font-weight: bold;
-            max-width: 200px;
-            text-align: center;
+        .zone {
+            position: absolute; padding: 30px;
+            border-radius: 20px; color: white; font-weight: bold; text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
         }
-        .c-1 { top: 20px; left: 20px; background: #e63946; } /* Je ne fais rien */
-        .c-2 { top: 20px; right: 20px; background: #457b9d; } /* Je préviens */
-        .c-3 { bottom: 20px; left: 50%; transform: translateX(-50%); background: #2a9d8f; } /* J'interviens */
-        .situation-box {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.5rem;
-            text-align: center;
-            color: #333;
+        .zone:hover { transform: scale(1.1); }
+        .z-red { top: 20px; left: 20px; background: #ef476f; }
+        .z-blue { top: 20px; right: 20px; background: #118ab2; }
+        .z-green { bottom: 20px; left: 50%; transform: translateX(-50%); background: #06d6a0; }
+        
+        .scenario-box {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px;
+            text-align: center; width: 300px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
 
-        /* --- VIDEO IFRAME --- */
-        iframe { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
     </style>
 </head>
 <body>
 
+<div class="bg-bubbles" id="bgBubbles"></div>
+
 <div id="presentation-container">
-    <button id="prev-btn" class="nav-btn">&#10094;</button>
-    <button id="next-btn" class="nav-btn">&#10095;</button>
+    <button id="prev-btn" class="nav-arrow">&#10094;</button>
+    <button id="next-btn" class="nav-arrow">&#10095;</button>
 
     <div class="slide active" id="slide1">
-        <h1>Préjugés, quand tu nous tiens</h1>
-        <p style="font-size: 1.5rem; color: #666;">Une animation interactive</p>
-        <div class="logos-row">
-            <img src="bb85148b-ae5c-56ea-8aed-28f8645ef37d.jpg" alt="62 Pas de Calais" class="logo-img">
-            <img src="46ac9ea9-deb1-531b-a49e-79bf6baff8fd.jpg" alt="Démocratie et Courage" class="logo-img">
-            <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Léo Lagrange" class="logo-img">
+        <h1>Préjugés,<br>Quand tu nous tiens</h1>
+        <p>Une animation interactive pour déconstruire les idées reçues</p>
+        <div class="logos-container">
+            <div class="logo-card"><img src="logo-62.jpg" alt="62" class="logo-img"></div>
+            <div class="logo-card"><img src="logo-democratie.jpg" alt="Democratie" class="logo-img"></div>
+            <div class="logo-card"><img src="logo-leo.png" alt="Leo" class="logo-img"></div>
         </div>
     </div>
 
     <div class="slide" id="slide2">
-        <button class="reset-btn" onclick="resetSlide(2)">🔄 Réinitialiser</button>
+        <button class="reset-btn" onclick="resetSlide(2)">🔄 Replay</button>
         <h1>Les Règles du Jeu</h1>
-        <ul class="rules-list" id="rulesList">
-            <li>Éviter de couper la parole aux autres</li>
-            <li>Encourager la participation de chacun</li>
-            <li>Maintenir un dialogue ouvert</li>
-            <li>Ne pas viser une personne en particulier</li>
-            <li>Ne pas transformer la discussion en cas personnel</li>
-        </ul>
+        <div class="rules-container" id="rulesList">
+            <div class="rule-bubble"><span>🎤</span> Éviter de couper la parole</div>
+            <div class="rule-bubble"><span>🤝</span> Encourager la participation</div>
+            <div class="rule-bubble"><span>💬</span> Dialogue ouvert & bienveillant</div>
+            <div class="rule-bubble"><span>🎯</span> On ne vise personne</div>
+            <div class="rule-bubble"><span>🚫</span> Pas de cas personnels</div>
+        </div>
     </div>
 
     <div class="slide" id="slide3">
-        <button class="reset-btn" onclick="resetSlide(3)">🔄 Réinitialiser</button>
-        <h1>Qui es-tu ?</h1>
-        <div class="bubble-container">
-            <div class="bubble" style="background-color: var(--bubble-c1);">Comment je m'appelle ?</div>
-            <div class="bubble" style="background-color: var(--bubble-c2);">Ce que j'aime</div>
-            <div class="bubble" style="background-color: var(--bubble-c3);">Ce que j'aime pas</div>
-            <div class="bubble" style="background-color: var(--bubble-c4);">Ce que je veux faire plus tard</div>
-            <div class="bubble" style="background-color: var(--bubble-c5);">Mon humeur du jour</div>
+        <button class="reset-btn" onclick="resetSlide(3)">🔄 Replay</button>
+        <h1>Présentations</h1>
+        <p>Cliquez sur une bulle pour choisir votre thème !</p>
+        <div class="icebreaker-grid">
+            <div class="ib-bubble" style="background:#ffd1d1;">Mon Prénom</div>
+            <div class="ib-bubble" style="background:#fff5b1;">Ce que j'aime</div>
+            <div class="ib-bubble" style="background:#c1f0c1;">Ce que je déteste</div>
+            <div class="ib-bubble" style="background:#d1e7ff;">Mon rêve</div>
+            <div class="ib-bubble" style="background:#eecbff;">Mon humeur</div>
         </div>
     </div>
 
     <div class="slide" id="slide4">
         <h1>Léo Lagrange</h1>
-        <div class="split-layout">
-            <div class="split-col">
-                <h3>L'Homme (1900-1940)</h3>
-                <div class="timeline-item"><strong>1900 :</strong> Né le 28 Novembre</div>
-                <div class="timeline-item">Député du Nord</div>
-                <div class="timeline-item"><strong>1936 :</strong> Premier sous-secrétaire d'État aux sports et loisirs</div>
-                <div class="timeline-item">Instaure les Congés payés, auberges de jeunesse, sports de masse</div>
-                <div class="timeline-item">Unique député engagé au combat</div>
-                <div class="timeline-item"><strong>9 juin 1940 :</strong> Décès au front</div>
-                <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Logo" style="width:100px; margin-top:20px;">
+        <div class="leo-layout">
+            <div class="leo-card">
+                <div class="leo-header">
+                    <span class="leo-icon">🎩</span>
+                    <h3>L'Homme (1900-1940)</h3>
+                </div>
+                <div class="history-item"><strong>1936 :</strong> Sous-secrétaire d'État aux Sports & Loisirs</div>
+                <div class="history-item">Père des <strong>Congés Payés</strong></div>
+                <div class="history-item">Créateur des Auberges de Jeunesse</div>
+                <div class="history-item">Mort au combat le 9 juin 1940</div>
             </div>
-            <div class="split-col">
-                <h3>L'Association</h3>
-                <div class="timeline-item">Fondée en 1950 par Pierre Mauroy</div>
-                <div class="timeline-item">Association d’éducation populaire reconnue d’utilité publique</div>
-                <div class="timeline-item"><strong>Héritage :</strong> Philosophie optimiste</div>
-                <div class="timeline-item"><strong>Missions :</strong> Éducation non formelle, loisirs, émancipation, lutte contre les inégalités</div>
-                <div class="timeline-item"><strong>Actions :</strong> Animation, petite enfance, formation pro, centres sociaux...</div>
+            <div class="leo-card">
+                <div class="leo-header">
+                    <span class="leo-icon">🚀</span>
+                    <h3>Le Mouvement (Aujourd'hui)</h3>
+                </div>
+                <div class="history-item">Éducation Populaire</div>
+                <div class="history-item">Lutte contre les inégalités</div>
+                <div class="history-item">Animation, Petite enfance, Formation</div>
+                <div class="history-item">"Aux hommes le temps de vivre"</div>
             </div>
         </div>
     </div>
 
     <div class="slide" id="slide5">
-        <h1>Les Acteurs Publics</h1>
-        <div class="concentric-container">
-            <div class="circle c-region">
-                <span class="circle-text">La Région</span>
-                <div class="circle-content">
-                    <strong>Missions :</strong><br>Lycées<br>ARS (Santé)<br>Transports régionaux<br>Formation
-                </div>
+        <h1>Qui fait quoi ?</h1>
+        <div class="circles-wrapper">
+            <div class="concentric c-1">
+                La Région
+                <div class="hover-info">Lycées<br>Transports (TER)<br>Formation Pro</div>
             </div>
-            <div class="circle c-dept">
-                <span class="circle-text">Le Département</span>
-                <div class="circle-content">
-                    <strong>Missions :</strong><br>Collèges<br>Routes départementales<br>ASE (Aide Sociale à l'Enfance)<br>Solidarité
-                </div>
+            <div class="concentric c-2">
+                Le Département
+                <div class="hover-info">Collèges<br>Solidarité (RSA, Handicap)<br>Aide Sociale à l'Enfance</div>
             </div>
-            <div class="circle c-ville">
-                <span class="circle-text">La Ville</span>
-                <div class="circle-content">
-                    <strong>Missions :</strong><br>École primaire<br>Métro / Bus<br>État civil<br>Urbanisme
-                </div>
+            <div class="concentric c-3">
+                La Ville
+                <div class="hover-info">Écoles primaires<br>État civil<br>Urbanisme</div>
             </div>
         </div>
     </div>
 
     <div class="slide" id="slide6">
-        <button class="reset-btn" onclick="resetSlide(6)">🔄 Réinitialiser</button>
-        <h1>Numéros Utiles & Urgences</h1>
-        <div class="grid-numbers">
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display">119</div>
-                <div class="num-details">Enfance en danger.<br>Appel confidentiel et gratuit 24/7.</div>
-            </div>
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display">17</div>
-                <div class="num-details">Police Secours.<br>En cas d'urgence immédiate (agression, vol...).</div>
-            </div>
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display">911 / 112</div>
-                <div class="num-details">Urgences universelles internationales.<br>Valable dans toute l'UE.</div>
-            </div>
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display"><img src="925d7b74-f729-5b7d-8c62-b1a6bb23ddcb.jpg" alt="3018"></div>
-                <div class="num-details">3018 - E-Enfance.<br>Lutte contre le cyber-harcèlement.<br>Écoute, aide et conseils.</div>
-            </div>
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display"><img src="2f2cd4b5-5d6a-5fc8-a6fe-1aa29e1ee830.jpg" alt="Défenseur des droits"></div>
-                <div class="num-details">3028 - Défenseur des droits.<br>Victime de discrimination ?<br>Saisir le défenseur.</div>
-            </div>
-            <div class="num-card" onclick="toggleZoom(this)">
-                <div class="main-display">3114</div>
-                <div class="num-details">Prévention Suicide.<br>Écoute professionnelle et confidentielle 24/7.</div>
-            </div>
+        <h1>Numéros d'Urgence</h1>
+        <div class="numbers-grid">
+            <div class="num-btn" onclick="openZoom('119', 'Enfance en Danger', 'Appel gratuit 24/7. Confidentiel.')">119</div>
+            <div class="num-btn" onclick="openZoom('17', 'Police Secours', 'En cas de danger immédiat.')">17</div>
+            <div class="num-btn" onclick="openZoom('112', 'Urgence Europe', 'Numéro unique européen.')">112</div>
+            <div class="num-btn" onclick="openZoom('img:logo-3018.jpg', '3018', 'Cyber-harcèlement. Écoute et conseils.')"><img src="logo-3018.jpg" alt="3018"></div>
+            <div class="num-btn" onclick="openZoom('img:logo-defenseur.jpg', '3028', 'Défenseur des Droits. Contre les discriminations.')"><img src="logo-defenseur.jpg" alt="Def"></div>
+            <div class="num-btn" onclick="openZoom('3114', 'Suicide Écoute', 'Prévention suicide. 24/7.')">3114</div>
         </div>
     </div>
 
     <div class="slide" id="slide7">
-        <button class="reset-btn" onclick="resetSlide(7)">🔄 Réinitialiser</button>
-        <h1>Discriminations : Quelques Chiffres</h1>
-        <p>Cliquez sur les cartes pour découvrir les réalités</p>
-        <div class="stats-container">
-            <div class="stat-card" onclick="this.classList.toggle('flipped')">
-                <div class="stat-inner">
-                    <div class="stat-front">Homophobie</div>
-                    <div class="stat-back">Les actes LGBTphobes augmentent chaque année (source SOS Homophobie).<br>Impact fort sur la santé mentale.</div>
+        <button class="reset-btn" onclick="resetSlide(7)">🔄 Replay</button>
+        <h1>Les Chiffres Clés (2023-2024)</h1>
+        <div class="stats-wrapper">
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <div class="icon">🏳️‍🌈</div>
+                        <h3>LGBTphobies</h3>
+                    </div>
+                    <div class="flip-back">
+                        <strong>+13%</strong>
+                        <p>d'augmentation des signalements en 1 an.<br><small>(Source: Rapport SOS Homophobie 2024)</small></p>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card" onclick="this.classList.toggle('flipped')">
-                <div class="stat-inner">
-                    <div class="stat-front">Racisme</div>
-                    <div class="stat-back">Les infractions à caractère raciste sont les plus nombreuses dans les rapports annuels de la CNCDH.</div>
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <div class="icon">🌍</div>
+                        <h3>Racisme</h3>
+                    </div>
+                    <div class="flip-back">
+                        <strong>+32%</strong>
+                        <p>de crimes ou délits à caractère raciste enregistrés.<br><small>(Source: Ministère de l'Intérieur 2023)</small></p>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card" onclick="this.classList.toggle('flipped')">
-                <div class="stat-inner">
-                    <div class="stat-front">Islamophobie</div>
-                    <div class="stat-back">Des préjugés persistants et des actes visant spécifiquement les personnes de confession musulmane.</div>
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <div class="icon">✡️</div>
+                        <h3>Antisémitisme</h3>
+                    </div>
+                    <div class="flip-back">
+                        <strong>X 4</strong>
+                        <p>Explosion des actes antisémites recensés en fin 2023.<br><small>(Source: CNCDH)</small></p>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card" onclick="this.classList.toggle('flipped')">
-                <div class="stat-inner">
-                    <div class="stat-front">Antisémitisme</div>
-                    <div class="stat-back">Forte recrudescence des actes antisémites signalés ces dernières années.</div>
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <div class="icon">♿</div>
+                        <h3>Handicap</h3>
+                    </div>
+                    <div class="flip-back">
+                        <strong>N°1</strong>
+                        <p>1er motif de discrimination saisi auprès du Défenseur des droits depuis 7 ans.</p>
+                    </div>
                 </div>
             </div>
-             <div class="stat-card" onclick="this.classList.toggle('flipped')">
-                <div class="stat-inner">
-                    <div class="stat-front">Christianophobie</div>
-                    <div class="stat-back">Actes de vandalisme contre les édifices religieux chrétiens et discriminations.</div>
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-front">
+                        <div class="icon">♀️</div>
+                        <h3>Sexisme</h3>
+                    </div>
+                    <div class="flip-back">
+                        <strong>37%</strong>
+                        <p>des Françaises ont déjà vécu une situation de non-consentement.<br><small>(Source: HCE 2023)</small></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="slide" id="slide8">
-        <button class="reset-btn" onclick="resetSlide(8)">🔄 Réinitialiser</button>
+        <button class="reset-btn" onclick="resetSlide(8)">🔄 Nettoyer</button>
         <h1>Nuage de Mots</h1>
-        <p>Entrez un mot qui évoque "Discrimination" pour vous</p>
-        <input type="text" id="word-input" placeholder="Tapez un mot et Entrée..." onkeypress="handleWordInput(event)">
-        <div id="cloud-area"></div>
+        <p>Pour vous, c'est quoi la "Discrimination" ?</p>
+        <input type="text" id="word-input" placeholder="Tape un mot et valide avec Entrée..." onkeypress="handleCloud(event)">
+        <div id="cloud-box"></div>
     </div>
 
     <div class="slide" id="slide9">
-        <h1>Cultionnary</h1>
-        <div style="background: #fff3cd; padding: 40px; border-radius: 20px; border: 2px solid #ffcc00; max-width: 800px;">
-            <h2 style="color: #d35400;">Les Règles</h2>
-            <ul style="font-size: 1.4rem; line-height: 1.8;">
-                <li>Faites des groupes, vous aurez <strong>7 dessins</strong> à réaliser.</li>
-                <li>Le dessinateur doit faire comprendre aux autres membres de son groupe ce que nous lui avons demandé.</li>
-                <li>Vous serez dessinateurs <strong>à tour de rôle</strong>.</li>
-                <li>🤫 <strong>Interdit</strong> de parler ou d’écrire pour le dessinateur !</li>
-            </ul>
+        <h1>Cultionnary 🎨</h1>
+        <div style="background:white; padding:40px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); max-width:700px; text-align:left;">
+            <div style="display:flex; align-items:center; margin-bottom:20px;">
+                <span style="font-size:2rem; margin-right:15px;">🤫</span>
+                <p style="font-size:1.3rem; margin:0;">Le dessinateur <strong>ne parle pas</strong> et n'écrit pas !</p>
+            </div>
+            <div style="display:flex; align-items:center; margin-bottom:20px;">
+                <span style="font-size:2rem; margin-right:15px;">⏱️</span>
+                <p style="font-size:1.3rem; margin:0;">Chacun passe à tour de rôle.</p>
+            </div>
+            <div style="display:flex; align-items:center;">
+                <span style="font-size:2rem; margin-right:15px;">🖼️</span>
+                <p style="font-size:1.3rem; margin:0;">Vous avez <strong>7 dessins</strong> à deviner en groupe.</p>
+            </div>
         </div>
     </div>
 
     <div class="slide" id="slide10">
-        <h1>Ciné Débat</h1>
-        <iframe width="800" height="450" src="https://www.youtube.com/embed/e2cNSBtWeGk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <h1>Ciné Débat 🎬</h1>
+        <iframe width="800" height="450" style="border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.3);" src="https://www.youtube.com/embed/e2cNSBtWeGk" title="Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <div class="slide" id="slide11">
         <h1>Le Courage d'Agir</h1>
-        <div class="corners-container">
-            <div class="corner c-1">JE NE FAIS RIEN</div>
-            <div class="corner c-2">JE PRÉVIENS</div>
-            <div class="corner c-3">J'INTERVIENS</div>
-            
-            <div class="situation-box">
-                <p><strong>RÈGLES :</strong><br>
-                Nous allons citer des situations.<br>
-                Déplacez-vous (mentalement ou physiquement)<br>
-                vers le coin qui correspond à votre réaction.</p>
+        <p>Positionnez-vous physiquement dans la pièce !</p>
+        <div class="corner-game">
+            <div class="zone z-red">JE NE FAIS RIEN 😶</div>
+            <div class="zone z-blue">JE PRÉVIENS 📞</div>
+            <div class="zone z-green">J'INTERVIENS ✋</div>
+            <div class="scenario-box">
+                <h3>Situation</h3>
+                <p>On énonce une situation de discrimination...</p>
+                <p>Où allez-vous ?</p>
             </div>
         </div>
     </div>
 
     <div class="slide" id="slide12">
-        <h1>Merci et à bientôt !</h1>
-        <div class="logos-row">
-            <img src="bb85148b-ae5c-56ea-8aed-28f8645ef37d.jpg" alt="62 Pas de Calais" class="logo-img">
-            <img src="46ac9ea9-deb1-531b-a49e-79bf6baff8fd.jpg" alt="Démocratie et Courage" class="logo-img">
-            <img src="0b226c450798410ac541646c86ec31afd840e5beab817a5d84fa821e7db61981ec84c3b4a3f072a7a2e1899c9fb06c6eae35e72c35c926c6cfb1b49a7dc99e8dfe251ed3cd4a38246ef26e66d881168c77e499b85d9893d1660a8cb90b97931d.png" alt="Léo Lagrange" class="logo-img">
+        <h1>Merci !</h1>
+        <p>Ensemble, brisons les préjugés.</p>
+        <div class="logos-container">
+            <div class="logo-card"><img src="logo-62.jpg" alt="62" class="logo-img"></div>
+            <div class="logo-card"><img src="logo-democratie.jpg" alt="Democratie" class="logo-img"></div>
+            <div class="logo-card"><img src="logo-leo.png" alt="Leo" class="logo-img"></div>
         </div>
     </div>
 
 </div>
 
+<div id="zoom-overlay" onclick="closeZoom()">
+    <div id="zoom-card" onclick="event.stopPropagation()">
+        <div id="zoom-content-img"></div>
+        <h2 id="zoom-title">Titre</h2>
+        <p id="zoom-desc">Description</p>
+        <button onclick="closeZoom()" style="margin-top:20px; padding:10px 30px; border-radius:20px; border:none; background:var(--secondary); color:white; cursor:pointer;">Fermer</button>
+    </div>
+</div>
+
 <script>
-    let currentSlide = 1;
-    const totalSlides = 12;
+    // --- BUBBLE BACKGROUND GENERATOR ---
+    const bgContainer = document.getElementById('bgBubbles');
+    for(let i=0; i<15; i++){
+        let b = document.createElement('div');
+        b.className = 'bg-bubble';
+        let size = Math.random() * 100 + 50;
+        b.style.width = size + 'px';
+        b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        b.style.animationDelay = (Math.random() * 5) + 's';
+        bgContainer.appendChild(b);
+    }
 
     // --- NAVIGATION ---
-    const updateSlides = () => {
-        document.querySelectorAll('.slide').forEach((slide, index) => {
-            slide.classList.remove('active');
-            if (index + 1 === currentSlide) {
-                slide.classList.add('active');
-                // Trigger animation for Slide 2 if needed
-                if (currentSlide === 2) animateRules();
-            }
-        });
-    };
+    let current = 1;
+    const total = 12;
+    
+    function showSlide(n) {
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        document.getElementById('slide'+n).classList.add('active');
+        
+        // Trigger animations spécifiques
+        if(n === 2) animateRules();
+    }
 
-    document.getElementById('next-btn').addEventListener('click', () => {
-        if (currentSlide < totalSlides) {
-            currentSlide++;
-            updateSlides();
-        }
-    });
+    document.getElementById('next-btn').onclick = () => { if(current < total) { current++; showSlide(current); }};
+    document.getElementById('prev-btn').onclick = () => { if(current > 1) { current--; showSlide(current); }};
 
-    document.getElementById('prev-btn').addEventListener('click', () => {
-        if (currentSlide > 1) {
-            currentSlide--;
-            updateSlides();
-        }
-    });
-
-    // --- LOGIQUE SLIDE 2 (Règles animées) ---
+    // --- SLIDE 2 RULES ---
     function animateRules() {
-        const items = document.querySelectorAll('#rulesList li');
-        items.forEach((item, index) => {
-            setTimeout(() => {
-                item.classList.add('show');
-            }, index * 1000); // Apparition toutes les secondes
+        const bubbles = document.querySelectorAll('.rule-bubble');
+        bubbles.forEach(b => b.classList.remove('show')); // Reset
+        bubbles.forEach((b, i) => {
+            setTimeout(() => b.classList.add('show'), i * 300 + 200);
         });
     }
 
-    // --- LOGIQUE SLIDE 6 (Zoom Cartes) ---
-    function toggleZoom(card) {
-        // Enlève le zoom des autres
-        const allCards = document.querySelectorAll('.num-card');
-        const isZoomed = card.classList.contains('zoomed');
+    // --- SLIDE 6 ZOOM ---
+    function openZoom(val, title, desc) {
+        document.getElementById('zoom-title').innerText = title;
+        document.getElementById('zoom-desc').innerText = desc;
+        const imgCont = document.getElementById('zoom-content-img');
+        imgCont.innerHTML = '';
         
-        allCards.forEach(c => c.classList.remove('zoomed'));
-        
-        if (!isZoomed) {
-            card.classList.add('zoomed');
+        if(val.startsWith('img:')) {
+            const src = val.split(':')[1];
+            imgCont.innerHTML = `<img src="${src}" style="height:150px;">`;
+        } else {
+            imgCont.innerHTML = `<h1 style="font-size:4rem; margin:0; color:#004e98;">${val}</h1>`;
         }
+        document.getElementById('zoom-overlay').style.display = 'flex';
+    }
+    function closeZoom() {
+        document.getElementById('zoom-overlay').style.display = 'none';
     }
 
-    // --- LOGIQUE SLIDE 8 (Nuage de mots) ---
-    function handleWordInput(e) {
-        if (e.key === 'Enter') {
-            const input = document.getElementById('word-input');
-            const word = input.value.trim();
-            if (word) {
-                createCloudWord(word);
-                input.value = '';
+    // --- SLIDE 8 WORD CLOUD ---
+    function handleCloud(e) {
+        if(e.key === 'Enter') {
+            const txt = e.target.value.trim();
+            if(txt) {
+                const tag = document.createElement('span');
+                tag.className = 'cloud-tag';
+                tag.innerText = txt;
+                
+                // Random position & style
+                const box = document.getElementById('cloud-box');
+                const x = Math.random() * (box.clientWidth - 100);
+                const y = Math.random() * (box.clientHeight - 50);
+                const colors = ['#004e98', '#e60028', '#ffcc00', '#2a9d8f', '#9b5de5'];
+                const size = Math.random() * 20 + 16;
+                const rot = Math.random() * 40 - 20;
+
+                tag.style.left = x + 'px';
+                tag.style.top = y + 'px';
+                tag.style.color = colors[Math.floor(Math.random()*colors.length)];
+                tag.style.fontSize = size + 'px';
+                tag.style.transform = `rotate(${rot}deg)`;
+
+                box.appendChild(tag);
+                e.target.value = '';
             }
         }
     }
 
-    function createCloudWord(text) {
-        const area = document.getElementById('cloud-area');
-        const span = document.createElement('span');
-        span.textContent = text;
-        span.className = 'cloud-word';
-        
-        // Random styles
-        const colors = ['#e60028', '#004e98', '#ffcc00', '#2a9d8f', '#e76f51'];
-        const size = Math.floor(Math.random() * 20) + 16; // 16px to 36px
-        const rotate = Math.floor(Math.random() * 60) - 30; // -30 to 30 deg
-        const top = Math.floor(Math.random() * (area.clientHeight - 40));
-        const left = Math.floor(Math.random() * (area.clientWidth - 80));
-
-        span.style.color = colors[Math.floor(Math.random() * colors.length)];
-        span.style.fontSize = size + 'px';
-        span.style.transform = `rotate(${rotate}deg)`;
-        span.style.top = top + 'px';
-        span.style.left = left + 'px';
-
-        area.appendChild(span);
-    }
-
-    // --- FONCTION RESET GLOBALE ---
-    function resetSlide(slideNum) {
-        if (slideNum === 2) {
-            const items = document.querySelectorAll('#rulesList li');
-            items.forEach(item => item.classList.remove('show'));
-            setTimeout(() => animateRules(), 500);
-        }
-        else if (slideNum === 6) {
-            document.querySelectorAll('.num-card').forEach(c => c.classList.remove('zoomed'));
-        }
-        else if (slideNum === 7) {
-            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('flipped'));
-        }
-        else if (slideNum === 8) {
-            document.getElementById('cloud-area').innerHTML = '';
-            document.getElementById('word-input').value = '';
-        }
-        else if (slideNum === 3) {
-            // Animation simple CSS re-trigger hack
-            const container = document.querySelector('#slide3 .bubble-container');
-            const clone = container.cloneNode(true);
-            container.parentNode.replaceChild(clone, container);
-        }
+    // --- GLOBAL RESET ---
+    function resetSlide(n) {
+        if(n === 2) animateRules();
+        if(n === 3) showSlide(3); // Just refresh
+        if(n === 7) document.querySelectorAll('.flip-card').forEach(c => c.classList.remove('flipped'));
+        if(n === 8) document.getElementById('cloud-box').innerHTML = '';
     }
 
     // Init
-    updateSlides();
+    showSlide(1);
 
 </script>
 </body>
